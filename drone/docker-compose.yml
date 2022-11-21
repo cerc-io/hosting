@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  server:
+    image: drone/drone:2.15.0
+    container_name: drone
+    environment:
+      - DRONE_GITEE_SERVER=http://host.docker.internal:3000
+      - DRONE_GITEE_CLIENT_ID=f7018cdd7c2a2515eb0cc3eeea039a3aeda0991a520c9e6f7eca37b97761de20
+      - DRONE_GITEE_CLIENT_SECRET=a29f1465460f620d1238b6ebf207ae6778a6bfd074b3c7befe72d5f9647ed02c
+      - DRONE_GITEE_API_SERVER=http://host.docker.internal:3000/api/v5
+      - DRONE_RPC_SECRET=13807911a5934895854d1cc0dceea44a
+      - DRONE_SERVER_HOST=localhost
+      - DRONE_SERVER_PROTO=http
+    restart: always
+    volumes:
+      - ./drone:/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # TODO: remove fixed host port number
+    ports:
+      - "7080:80"
+      - "7443:443"

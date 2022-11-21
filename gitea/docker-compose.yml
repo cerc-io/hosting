@@ -23,6 +23,7 @@ services:
       - ./gitea:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
+    # TODO: remove fixed host port number
     ports:
       - "3000:3000"
       - "222:22"
