@@ -16,6 +16,9 @@ services:
       - GITEA__database__NAME=gitea
       - GITEA__database__USER=gitea
       - GITEA__database__PASSWD=gitea
+      - GITEA__server__HTTP_PORT=3000
+      - GITEA__server__LOCAL_ROOT_URL=http://gitea.local:3000/
+      - GITEA__server__ROOT_URL=http://gitea.local:3000/
     restart: always
     networks:
       - gitea
