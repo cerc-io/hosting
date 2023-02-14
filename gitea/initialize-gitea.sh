@@ -1,22 +1,61 @@
 #!/bin/env bash
 # Run this script once after bringing up gitea in docker compose
-# TODO: add checks to make the script idempotent
+# TODO: add a check to detect that gitea has not fully initialized yet (no user relation error)
 GITEA_USER=gitea_admin
 GITEA_PASSWORD=admin1234
 GITEA_USER_EMAIL=${GITEA_USER}@example.com
 GITEA_NEW_ORGANIZATION=cerc-io
 GITEA_URL_PREFIX=http://localhost:3000
+CERC_GITEA_TOKEN_NAME=laconic-so-publication-token
 # Create admin user
-docker compose exec --user git server gitea admin user create --admin --username ${GITEA_USER} --password ${GITEA_PASSWORD} --email ${GITEA_USER_EMAIL}
-# Create access token
-curl -X POST "http://${GITEA_URL_PREFIX}/api/v1/users/${GITEA_USER}/tokens" \
+# First check if it already exists
+docker compose exec --user git server gitea admin user list --admin | grep -v -e "^ID" | awk '{ print $2 }' | grep ${GITEA_USER} > /dev/null
+if [[ $? == 1 ]] ; then
+    # Then create if it wasn't found
+    docker compose exec --user git server gitea admin user create --admin --username ${GITEA_USER} --password ${GITEA_PASSWORD} --email ${GITEA_USER_EMAIL}
+fi
+# Check if the token already exists
+curl -s "${GITEA_URL_PREFIX}/api/v1/users/${GITEA_USER}/tokens" \
   -u ${GITEA_USER}:${GITEA_PASSWORD} \
   -H "Content-Type: application/json" \
-  -d '{"name":"laconic-so-publication-token"}'
+  | jq --exit-status -r 'to_entries[] | select(.value.name == "'${CERC_GITEA_TOKEN_NAME}'")' > /dev/null
+if [[ $? != 0 ]] ; then
+    # Create access token if not found
+    # Note that we either create the token here, or we needed to be passed 
+    # the token by the caller. This is because gitea won't release the token
+    # plaintext post-creation.
+    new_gitea_token=$( curl -s -X POST "${GITEA_URL_PREFIX}/api/v1/users/${GITEA_USER}/tokens" \
+      -u ${GITEA_USER}:${GITEA_PASSWORD} \
+      -H "Content-Type: application/json" \
+      -d '{"name":"'${CERC_GITEA_TOKEN_NAME}'"}' \
+      | jq -r .sha1 )
+    echo "This is your gitea access token: ${new_gitea_token}. Keep it safe and secure, it can not be fetched again from gitea."
+    CERC_GITEA_AUTH_TOKEN=${new_gitea_token}
+else
+    # If the token exists, then we must have been passed its value.
+    # If we were not, then we fail hard here.
+    if [[ -z ${CERC_GITEA_AUTH_TOKEN} ]] ; then
+        echo "FATAL error: gitea auth token \"${CERC_GITEA_TOKEN_NAME}\" already exists but no CERC_GITEA_AUTH_TOKEN was provided"
+        exit 1
+    fi
+fi
+# Now that we're sure the token exists and is set in CERC_GITEA_AUTH_TOKEN,
+# we can proceed with token-authenticated API requests below
 # Create org
-# See: https://discourse.gitea.io/t/create-remove-organization-through-api/478
-curl -X POST "${GITEA_URL_PREFIX}/api/v1/admin/users/${GITEA_USER}/orgs" \
-  -H "Authorization: token ${GITEA_TOKEN}" \
+# First check if it already exists
+curl -s "${GITEA_URL_PREFIX}/api/v1/admin/users/${GITEA_USER}/orgs" \
+  -H "Authorization: token ${CERC_GITEA_AUTH_TOKEN}" \
   -H "Content-Type: application/json" \
   -H  "accept: application/json" \
-  -d '{"username": "'${GITEA_NEW_ORGANIZATION}'"}'
+  | jq --exit-status -r 'to_entries[] | select(.value.name == "'${GITEA_NEW_ORGANIZATION}'")' > /dev/null
+if [[ $? != 0 ]] ; then
+    # If it doesn't exist, create it
+    # See: https://discourse.gitea.io/t/create-remove-organization-through-api/478
+    curl -s -X POST "${GITEA_URL_PREFIX}/api/v1/admin/users/${GITEA_USER}/orgs" \
+      -H "Authorization: token ${CERC_GITEA_AUTH_TOKEN}" \
+      -H "Content-Type: application/json" \
+      -H  "accept: application/json" \
+      -d '{"username": "'${GITEA_NEW_ORGANIZATION}'"}' > /dev/null
+    echo "Created the organization ${GITEA_NEW_ORGANIZATION}"
+fi
+echo "Success, gitea is properly initialized"
