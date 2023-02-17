@@ -24,6 +24,8 @@ if [[ $? == 1 ]] ; then
     # Then create if it wasn't found
     ${compose_command} exec --user git server gitea admin user create --admin --username ${GITEA_USER} --password ${GITEA_PASSWORD} --email ${GITEA_USER_EMAIL}
 fi
+# HACK: sleep a bit because if we don't gitea will return empty responses
+sleep 5
 # Check if the token already exists
 token_response=$( curl -s "${GITEA_URL_PREFIX}/api/v1/users/${GITEA_USER}/tokens" \
   -u ${GITEA_USER}:${GITEA_PASSWORD} \
