@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 # Run this script once after bringing up gitea in docker compose
 # TODO: add a check to detect that gitea has not fully initialized yet (no user relation error)
 GITEA_USER=gitea_admin
@@ -7,19 +7,34 @@ GITEA_USER_EMAIL=${GITEA_USER}@example.com
 GITEA_NEW_ORGANIZATION=cerc-io
 GITEA_URL_PREFIX=http://localhost:3000
 CERC_GITEA_TOKEN_NAME=laconic-so-publication-token
+if [[ -n "$CERC_SCRIPT_DEBUG" ]]; then
+    set -x
+fi
 # Create admin user
 # First check if it already exists
-docker compose exec --user git server gitea admin user list --admin | grep -v -e "^ID" | awk '{ print $2 }' | grep ${GITEA_USER} > /dev/null
+if [[ -z ${CERC_SO_COMPOSE_PROJECT} ]] ; then
+    compose_command="docker compose"
+else
+    compose_command="docker compose -p ${CERC_SO_COMPOSE_PROJECT}"
+fi
+# HACK: sleep a bit because gitea may not be up yet (container reports it has started before service is available)
+sleep 5
+${compose_command} exec --user git server gitea admin user list --admin | grep -v -e "^ID" | awk '{ print $2 }' | grep ${GITEA_USER} > /dev/null
 if [[ $? == 1 ]] ; then
     # Then create if it wasn't found
-    docker compose exec --user git server gitea admin user create --admin --username ${GITEA_USER} --password ${GITEA_PASSWORD} --email ${GITEA_USER_EMAIL}
+    ${compose_command} exec --user git server gitea admin user create --admin --username ${GITEA_USER} --password ${GITEA_PASSWORD} --email ${GITEA_USER_EMAIL}
 fi
 # Check if the token already exists
-curl -s "${GITEA_URL_PREFIX}/api/v1/users/${GITEA_USER}/tokens" \
+token_response=$( curl -s "${GITEA_URL_PREFIX}/api/v1/users/${GITEA_USER}/tokens" \
   -u ${GITEA_USER}:${GITEA_PASSWORD} \
-  -H "Content-Type: application/json" \
-  | jq --exit-status -r 'to_entries[] | select(.value.name == "'${CERC_GITEA_TOKEN_NAME}'")' > /dev/null
-if [[ $? != 0 ]] ; then
+  -H "Content-Type: application/json")
+if [[ -n ${token_response} ]] ; then
+    echo ${token_response}  | jq --exit-status -r 'to_entries[] | select(.value.name == "'${CERC_GITEA_TOKEN_NAME}'")'
+    if [[ $? == 0 ]] ; then
+        token_found=1
+    fi
+fi
+if [[ ${token_found} != 1 ]] ; then
     # Create access token if not found
     # Note that we either create the token here, or we needed to be passed 
     # the token by the caller. This is because gitea won't release the token
