@@ -40,6 +40,9 @@ services:
       - POSTGRES_USER=gitea
       - POSTGRES_PASSWORD=gitea
       - POSTGRES_DB=gitea
+    # Workaround below for lack of docker uid mapping. Change the container's postgres user's uid/gid to match the host user's
+    entrypoint: bash
+    command: -c  'usermod -u ${CERC_HOST_UID:-1000} postgres;groupmod -g ${CERC_HOST_GID:-1000} postgres;exec /usr/local/bin/docker-entrypoint.sh postgres'
     networks:
       - gitea
     volumes:
