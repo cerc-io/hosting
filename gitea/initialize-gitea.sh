@@ -47,6 +47,7 @@ if [[ ${token_found} != 1 ]] ; then
       -d '{"name":"'${CERC_GITEA_TOKEN_NAME}'"}' \
       | jq -r .sha1 )
     echo "This is your gitea access token: ${new_gitea_token}. Keep it safe and secure, it can not be fetched again from gitea."
+    echo "To use with laconic-so set this environment variable: export CERC_NPM_AUTH_TOKEN=${new_gitea_token}"
     CERC_GITEA_AUTH_TOKEN=${new_gitea_token}
 else
     # If the token exists, then we must have been passed its value.
@@ -75,4 +76,5 @@ if [[ $? != 0 ]] ; then
       -d '{"username": "'${GITEA_NEW_ORGANIZATION}'"}' > /dev/null
     echo "Created the organization ${GITEA_NEW_ORGANIZATION}"
 fi
+echo "Gitea was configured to use host name: gitea.local, ensure that this resolves to localhost, e.g. with sudo vi /etc/hosts"
 echo "Success, gitea is properly initialized"
