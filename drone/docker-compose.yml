@@ -4,8 +4,8 @@ services:
   drone:
     image: drone/drone:2
     environment:
-      - DRONE_GITEE_CLIENT_ID=f7018cdd7c2a2515eb0cc3eeea039a3aeda0991a520c9e6f7eca37b97761de20
-      - DRONE_GITEE_CLIENT_SECRET=a29f1465460f620d1238b6ebf207ae6778a6bfd074b3c7befe72d5f9647ed02c
+      - DRONE_GITEE_CLIENT_ID=put_the_real_client_id_here
+      - DRONE_GITEE_CLIENT_SECRET=put_the_real_secret_here
       - DRONE_RPC_SECRET=super-duper-secret
       - DRONE_SERVER_HOST=gitea.local # TODO: make this more generic
       - DRONE_SERVER_PROTO=http
