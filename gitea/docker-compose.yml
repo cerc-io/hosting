@@ -1,5 +1,6 @@
 version: "3"
-
+# TODO: remove version since it is now redundant
+#       remove this network definition unless there's a reason for it
 networks:
   gitea:
     external: false
