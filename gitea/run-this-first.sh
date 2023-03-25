@@ -4,3 +4,4 @@ if [[ -n "$CERC_SCRIPT_DEBUG" ]]; then
 fi
 mkdir -p ./gitea
 mkdir -p ./gitea/ssh
+mkdir -p ./act_runner

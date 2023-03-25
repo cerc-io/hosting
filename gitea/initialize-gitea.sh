@@ -7,6 +7,7 @@ GITEA_USER_EMAIL=${GITEA_USER}@example.com
 GITEA_NEW_ORGANIZATION=cerc-io
 GITEA_URL_PREFIX=http://localhost:3000
 CERC_GITEA_TOKEN_NAME=laconic-so-publication-token
+CERC_GITEA_RUNNER_REGISTRATION_TOKEN=eMdEwIzSo87nBh0UFWZlbp308j6TNWr3WhWxQqIc
 if [[ -n "$CERC_SCRIPT_DEBUG" ]]; then
     set -x
 fi
@@ -17,8 +18,7 @@ if [[ -z ${CERC_SO_COMPOSE_PROJECT} ]] ; then
 else
     compose_command="docker compose -p ${CERC_SO_COMPOSE_PROJECT}"
 fi
-# HACK: sleep a bit because gitea may not be up yet (container reports it has started before service is available)
-sleep 5
+sleep 15
 ${compose_command} exec --user git server gitea admin user list --admin | grep -v -e "^ID" | awk '{ print $2 }' | grep ${GITEA_USER} > /dev/null
 if [[ $? == 1 ]] ; then
     # Then create if it wasn't found
@@ -78,3 +78,7 @@ if [[ $? != 0 ]] ; then
 fi
 echo "Gitea was configured to use host name: gitea.local, ensure that this resolves to localhost, e.g. with sudo vi /etc/hosts"
 echo "Success, gitea is properly initialized"
+
+
+# Seed a token for act_runner registration.
+docker compose -p ${CERC_SO_COMPOSE_PROJECT} exec db psql -U gitea -d gitea -c "INSERT INTO public.action_runner_token(token, owner_id, repo_id, is_active, created, updated, deleted) VALUES('${CERC_GITEA_RUNNER_REGISTRATION_TOKEN}', 0, 0, 'f', 1679000000, 1679000000, NULL);"
