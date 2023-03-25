@@ -55,7 +55,7 @@ services:
     environment:
       - GITEA_INSTANCE_INSECURE=1
       - GITEA_RUNNER_REGISTRATION_TOKEN=eMdEwIzSo87nBh0UFWZlbp308j6TNWr3WhWxQqIc
-      - GITEA_INSTANCE_URL=http://server:3000
+      - GITEA_INSTANCE_URL=http://host.docker.internal:3000
       - GITEA_RUNNER_LABELS=ubuntu-latest:docker://cerc/act_runner-task-executor:local,ubuntu-22.04:docker://cerc/act_runner-task-executor:local
     networks:
       - gitea
