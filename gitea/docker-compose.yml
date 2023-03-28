@@ -55,10 +55,14 @@ services:
     environment:
       - GITEA_INSTANCE_INSECURE=1
       - GITEA_RUNNER_REGISTRATION_TOKEN=eMdEwIzSo87nBh0UFWZlbp308j6TNWr3WhWxQqIc
-      - GITEA_INSTANCE_URL=http://host.docker.internal:3000
+      - GITEA_INSTANCE_URL=http://gitea.local:3000
       - GITEA_RUNNER_LABELS=ubuntu-latest:docker://cerc/act-runner-task-executor:local,ubuntu-22.04:docker://cerc/act-runner-task-executor:local
+      - GITEA_RUNNER_DOCKER_CONTAINER_OPTIONS=--add-host=gitea.local:host-gateway
+      - GITEA_RUNNER_DOCKER_PRIVILEGED=true
     networks:
       - gitea
+    extra_hosts:
+      - "gitea.local:host-gateway"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./act_runner:/data
+      - ./act-runner:/data
