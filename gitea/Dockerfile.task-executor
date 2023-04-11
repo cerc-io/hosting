@@ -1,0 +1,14 @@
+FROM ubuntu:22.04
+
+# Install basic tools
+RUN apt update && apt install -y gpg curl apt-transport-https ca-certificates lsb-release build-essential
+
+# Add Docker repo
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Add NodeJS repo
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+
+# Install Docker and NodeJS packages.
+RUN apt update && apt install -y docker-ce nodejs && rm -rf /var/lib/apt/lists/*
