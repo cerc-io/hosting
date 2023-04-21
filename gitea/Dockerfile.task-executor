@@ -1,7 +1,7 @@
 FROM ubuntu:22.04
 
 # Install basic tools
-RUN apt update && apt install -y gpg curl apt-transport-https ca-certificates lsb-release build-essential
+RUN apt update && apt install -y gpg curl apt-transport-https ca-certificates lsb-release build-essential fuse-overlayfs
 
 # Add Docker repo
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -12,3 +12,5 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 
 # Install Docker and NodeJS packages.
 RUN apt update && apt install -y docker-ce nodejs && rm -rf /var/lib/apt/lists/*
+
+RUN echo '{ "storage-driver": "fuse-overlayfs" }' > /etc/docker/daemon.json
