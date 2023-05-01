@@ -16,7 +16,7 @@ http {
         }
 
         location / {
-            proxy_pass http://webservice:8000/;
+            proxy_pass ${LACONIC_ORIGIN_SERVICE_URL};
         }
     }
 
