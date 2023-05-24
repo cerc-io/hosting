@@ -16,3 +16,11 @@ docker build -t cerc/act-runner:local .
 1. Bring up the gitea cluster `docker compose up -d`
 1. Run the script `./initialize-gitea.sh`
 1. Note the access token printed, it will be needed to publish packages.
+
+#### Debugging
+Gitea server logs can be seen via docker logs <container-id>.
+To enable more verbose log output add an environment variable definition like:
+```
+GITEA__log__LEVEL=TRACE
+```
+to the `server` definition in `docker-compose.yml` and re-start.
