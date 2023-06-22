@@ -24,3 +24,4 @@ To enable more verbose log output add an environment variable definition like:
 GITEA__log__LEVEL=TRACE
 ```
 to the `server` definition in `docker-compose.yml` and re-start.
+Details on how to setup remote debugging of the gitea server inside its container can be found [here](gitea-debugging.md).
