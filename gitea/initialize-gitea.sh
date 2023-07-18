@@ -44,7 +44,7 @@ if [[ ${token_found} != 1 ]] ; then
     new_gitea_token=$( curl -s -X POST "${GITEA_URL_PREFIX}/api/v1/users/${GITEA_USER}/tokens" \
       -u ${GITEA_USER}:${GITEA_PASSWORD} \
       -H "Content-Type: application/json" \
-      -d '{"name":"'${CERC_GITEA_TOKEN_NAME}'", "scopes": [ "sudo", "package" ] }' \
+      -d '{"name":"'${CERC_GITEA_TOKEN_NAME}'", "scopes": [ "read:admin", "write:admin", "read:organization", "write:organization", "read:repository", "write:repository", "read:package", "write:package" ] }' \
       | jq -r .sha1 )
     echo "This is your gitea access token: ${new_gitea_token}. Keep it safe and secure, it can not be fetched again from gitea."
     echo "To use with laconic-so set this environment variable: export CERC_NPM_AUTH_TOKEN=${new_gitea_token}"
