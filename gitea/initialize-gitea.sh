@@ -79,7 +79,8 @@ fi
 
 
 # Seed a token for act_runner registration.
-docker compose -p ${CERC_SO_COMPOSE_PROJECT} exec db psql -U gitea -d gitea -c "INSERT INTO public.action_runner_token(token, owner_id, repo_id, is_active, created, updated, deleted) VALUES('${CERC_GITEA_RUNNER_REGISTRATION_TOKEN}', 0, 0, 'f', 1679000000, 1679000000, NULL);" >/dev/null
+${compose_command} exec db \
+    psql -U gitea -d gitea -c "INSERT INTO public.action_runner_token(token, owner_id, repo_id, is_active, created, updated, deleted) VALUES('${CERC_GITEA_RUNNER_REGISTRATION_TOKEN}', 0, 0, 'f', 1679000000, 1679000000, NULL);" >/dev/null
 
 echo "Gitea was configured to use host name: gitea.local, ensure that this resolves to localhost, e.g. with sudo vi /etc/hosts"
 echo "Success, gitea is properly initialized"
