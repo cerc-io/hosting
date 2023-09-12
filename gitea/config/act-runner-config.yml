@@ -36,10 +36,10 @@ cache:
   # The host of the cache server.
   # It's not for the address to listen, but the address to connect from job containers.
   # So 0.0.0.0 is a bad choice, leave it empty to detect automatically.
-  host: ""
+  host: "gitea.local"
   # The port of the cache server.
   # 0 means to use a random available port.
-  port: 0
+  port: 8088
 
 container:
   # Whether to use privileged mode or not when launching task containers (privileged mode is required for Docker-in-Docker).
