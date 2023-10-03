@@ -46,7 +46,8 @@ services:
     image: cerc/act-runner:local
     restart: always
     environment:
-      - GITEA_RUNNER_REGISTRATION_TOKEN=eMdEwIzSo87nBh0UFWZlbp308j6TNWr3WhWxQqIc
+      # Note: eMdEwIzSo87nBh0UFWZlbp308j6TNWr3WhWxQqIc is a static token we use for convenience in stand-alone deployments. Not secure, obviously.
+      - GITEA_RUNNER_REGISTRATION_TOKEN=${CERC_GITEA_RUNNER_REGISTRATION_TOKEN:-eMdEwIzSo87nBh0UFWZlbp308j6TNWr3WhWxQqIc}
       - GITEA_INSTANCE_URL=http://gitea.local:3000
       - GITEA_RUNNER_LABELS=ubuntu-latest:docker://cerc/act-runner-task-executor:local,ubuntu-22.04:docker://cerc/act-runner-task-executor:local
       - CONFIG_FILE=/config/act-runner-config.yml

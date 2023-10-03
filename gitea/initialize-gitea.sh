@@ -1,16 +1,28 @@
 #!/usr/bin/env bash
 # Run this script once after bringing up gitea in docker compose
 # TODO: add a check to detect that gitea has not fully initialized yet (no user relation error)
-GITEA_USER=gitea_admin
-GITEA_PASSWORD=admin1234
-GITEA_USER_EMAIL=${GITEA_USER}@example.com
-GITEA_NEW_ORGANIZATION=cerc-io
-GITEA_URL_PREFIX=http://localhost:3000
-CERC_GITEA_TOKEN_NAME=laconic-so-publication-token
-CERC_GITEA_RUNNER_REGISTRATION_TOKEN=eMdEwIzSo87nBh0UFWZlbp308j6TNWr3WhWxQqIc
+
 if [[ -n "$CERC_SCRIPT_DEBUG" ]]; then
     set -x
 fi
+
+# See: https://stackoverflow.com/a/74449556
+secure_password() {
+    cat /dev/urandom | tr -dc A-Za-z0-9~_- | head -c 10 && echo
+}
+
+GITEA_USER=${CERC_GITEA_NEW_ADMIN_USERNAME:-"gitea_admin"}
+GITEA_PASSWORD=${CERC_GITEA_SET_NEW_ADMIN_PASSWORD:-"$(secure_password)"}
+GITEA_USER_EMAIL=${CERC_GITEA_SET_NEW_ADMIN_EMAIL:-${GITEA_USER}@example.com}
+GITEA_NEW_ORGANIZATION=${CERC_GITEA_NEW_ORGANIZATION:-"cerc-io"}
+GITEA_URL_PREFIX=http://localhost:3000
+CERC_GITEA_TOKEN_NAME=laconic-so-publication-token
+
+if ! [[ -n "$CERC_GITEA_RUNNER_REGISTRATION_TOKEN" ]]; then
+    echo "Warning: using insecure default runner registration token"
+    CERC_GITEA_RUNNER_REGISTRATION_TOKEN=eMdEwIzSo87nBh0UFWZlbp308j6TNWr3WhWxQqIc
+fi
+
 # Create admin user
 # First check if it already exists
 if [[ -z ${CERC_SO_COMPOSE_PROJECT} ]] ; then
@@ -46,8 +58,8 @@ if [[ ${token_found} != 1 ]] ; then
       -H "Content-Type: application/json" \
       -d '{"name":"'${CERC_GITEA_TOKEN_NAME}'", "scopes": [ "read:admin", "write:admin", "read:organization", "write:organization", "read:repository", "write:repository", "read:package", "write:package" ] }' \
       | jq -r .sha1 )
-    echo "This is your gitea access token: ${new_gitea_token}. Keep it safe and secure, it can not be fetched again from gitea."
-    echo "To use with laconic-so set this environment variable: export CERC_NPM_AUTH_TOKEN=${new_gitea_token}"
+    echo "NOTE: This is your gitea access token: ${new_gitea_token}. Keep it safe and secure, it can not be fetched again from gitea."
+    echo "NOTE: To use with laconic-so set this environment variable: export CERC_NPM_AUTH_TOKEN=${new_gitea_token}"
     CERC_GITEA_AUTH_TOKEN=${new_gitea_token}
 else
     # If the token exists, then we must have been passed its value.
@@ -81,5 +93,9 @@ fi
 # Seed a token for act_runner registration.
 docker compose -p ${CERC_SO_COMPOSE_PROJECT} exec db psql -U gitea -d gitea -c "INSERT INTO public.action_runner_token(token, owner_id, repo_id, is_active, created, updated, deleted) VALUES('${CERC_GITEA_RUNNER_REGISTRATION_TOKEN}', 0, 0, 'f', 1679000000, 1679000000, NULL);" >/dev/null
 
-echo "Gitea was configured to use host name: gitea.local, ensure that this resolves to localhost, e.g. with sudo vi /etc/hosts"
+echo "NOTE: Gitea was configured to use host name: gitea.local, ensure that this resolves to localhost, e.g. with sudo vi /etc/hosts"
+if ! [[ -n "$CERC_GITEA_SET_NEW_ADMIN_PASSWORD" ]]; then
+    echo "NOTE: Gitea was configured with admin user and password: ${GITEA_USER}, ${GITEA_PASSWORD}"
+    echo "NOTE: Please make a secure note of the password in order to log in as the admin user"
+fi
 echo "Success, gitea is properly initialized"
