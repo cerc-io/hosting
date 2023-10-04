@@ -43,6 +43,11 @@ token_response=$( curl -s "${GITEA_URL_PREFIX}/api/v1/users/${GITEA_USER}/tokens
   -u ${GITEA_USER}:${GITEA_PASSWORD} \
   -H "Content-Type: application/json")
 if [[ -n ${token_response} ]] ; then
+    # Simple check for re-running this script. Ideally we should behave more elegantly.
+    if [[ "${token_response}" == *"password is invalid"* ]]; then
+        echo "Note: admin password is invalid, skipping subsqeuent steps"
+        exit 0
+    fi
     echo ${token_response}  | jq --exit-status -r 'to_entries[] | select(.value.name == "'${CERC_GITEA_TOKEN_NAME}'")'
     if [[ $? == 0 ]] ; then
         token_found=1
