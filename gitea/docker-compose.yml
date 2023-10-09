@@ -19,7 +19,7 @@ services:
     extra_hosts:
       - "gitea.local:host-gateway"
     volumes:
-      - ./gitea:/data
+      - gitea-data:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     # TODO: remove fixed host port number
@@ -40,7 +40,7 @@ services:
     entrypoint: bash
     command: -c  'usermod -u ${CERC_HOST_UID:-1000} postgres;groupmod -g ${CERC_HOST_GID:-1000} postgres;exec /usr/local/bin/docker-entrypoint.sh postgres'
     volumes:
-      - ./postgres:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
 
   runner:
     image: cerc/act-runner:local
@@ -55,7 +55,15 @@ services:
       - "gitea.local:host-gateway"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./act-runner:/data
-      - ./config:/config:ro
+      - act-runner-data:/data
+      - act-runner-config:/config:ro
     ports:
       - 8088:8088
+
+
+volumes:
+  gitea-data:
+  postgres-data:
+  act-runner-data:
+  act-runner-config:
+
