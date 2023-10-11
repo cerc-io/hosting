@@ -1,5 +1,8 @@
 FROM ubuntu:22.04
 
+# Set system time zone to prevent the tzdata package from hanging looking for user input pater
+RUN ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONTAINER_TIMEZONE > /etc/timezone
+
 # Install basic tools
 RUN apt update && apt install -y gpg curl apt-transport-https ca-certificates lsb-release build-essential
 
@@ -24,3 +27,7 @@ RUN set -uex; \
 
 # Install Docker
 RUN apt update && apt install -y docker-ce && rm -rf /var/lib/apt/lists/*
+# Install sudo because some actions projects assume it is present, and it is present in GitHub runners
+RUN apt update && apt install -y sudo
+# Install software-properties-common so we have the add-apt-repository command, used by some actions to add a package repo
+RUN apt update && apt install -y software-properties-common
