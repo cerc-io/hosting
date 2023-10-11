@@ -1,6 +1,6 @@
 FROM ubuntu:22.04
 
-# Set system time zone to prevent the tzdata package from hanging looking for user input pater
+# Set system time zone to prevent the tzdata package from hanging looking for user input
 RUN ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONTAINER_TIMEZONE > /etc/timezone
 
 # Install basic tools
