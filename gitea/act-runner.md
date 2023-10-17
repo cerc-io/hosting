@@ -17,10 +17,10 @@ registration token, for example, `FTyMBkcK9ErmD0wm8LfBzfXOUUlQA7dBJF6BB64Z`.
 After you have obtained a registration token, download the `gitea/act_runner` release matching your platform and architecture and run it as follows:
 
 ```
-# Download latest gitea/act_runner release.
+# Download latest gitea/act_runner release for your platform.
 $ wget https://gitea.com/gitea/act_runner/releases/download/latest/act_runner-0.2.6-darwin-amd64 && chmod a+x act_runner-0.2.6-darwin-amd64
 
-# Register the runner with the Gitea instance.
+# Register the runner with the Gitea instance using the token obtained above.
 $ ./act_runner-0.2.6-darwin-amd64 register \
     --instance http://gitea.local:3000 \
     --labels 'darwin-latest-amd64:host,darwin-13-amd64:host' \
