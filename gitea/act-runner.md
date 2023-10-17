@@ -35,9 +35,8 @@ $ ./act_runner-0.2.6-darwin-amd64 daemon
 ### Labels
 
 The most important detail in this example is the label.  For the Ubuntu runner which is deployed automatically with this project, the label `ubuntu-latest:docker://cerc/act-runner-task-executor:local` is
-used, which instructs `gitea/act_runner` that tasks should be executed inside an instance of the `cerc/act-runner-task-executor:local` Docker container.  In this example, the label is `darwin-latest-amd64:host`.
-This means that tasks will be executed directly on the host.  Since there are additional security implications when executing tasks on the host, only trusted repositories with strict access controls
-should be allowed to schedule CI jobs on the runner.
+used, which instructs `gitea/act_runner` that a task which `runs-on: ubuntu-latest` should be executed inside an instance of the `cerc/act-runner-task-executor:local` Docker container.  In this example, the label is `darwin-latest-amd64:host`.  This means that a task which `runs-on: darwin-latest-amd64` will be executed natively on the host machine.  Since there are additional security implications when executing tasks
+on the host, only trusted repositories with strict access controls should be allowed to schedule CI jobs on the runner.
 
 ### Example Workflow
 
