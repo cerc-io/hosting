@@ -28,5 +28,5 @@ Details on how to setup remote debugging of the gitea server inside its containe
 
 #### Action Runners
 
-A Dockerized action runner for the `ubuntu-latest` and `ubuntu-22.04` labels is deployed by default.  Details on deploying native
-action runners, eg, on macOS, can be found [here](act-runner.md).
+A Dockerized action runner is deployed by default for the labels `ubuntu-latest` and `ubuntu-22.04`.  Details on deploying
+additional runners can be found [here](act-runner.md).
