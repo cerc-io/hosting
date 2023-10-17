@@ -3,7 +3,7 @@
 ### Releases
 Gitea publishes binary releases of [gitea/act_runner](https://gitea.com/gitea/act_runner/releases) for many platform and architectures, which can be used to deploy new action runners simply.
 
-The following example uses `gitea/act_runner` 0.2.6 on macOS Ventura 13.3 x64.
+The following example uses `gitea/act_runner` 0.2.6 to deploy a runner on macOS Ventura 13.3 x64.
 
 ### Registration Token
 
