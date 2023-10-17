@@ -7,7 +7,7 @@ The following example uses `gitea/act_runner` 0.2.6 to deploy a runner on macOS 
 
 ### Registration Token
 
-> Note: Runners can be registered globally for an entire Gitea instance, for a specific organization, or for a single repo.  This example assumes registering the runner globally.
+> Note: Runners can be registered globally for an entire Gitea instance, for a specific organization, or for a single repo.  This example registers globally.
 
 Before executing the runner, first obtain a registration token by visiting http://gitea.local:3000/admin/actions/runners, clicking the 'Create new Runner' button, and copying the displayed
 registration token, for example, `FTyMBkcK9ErmD0wm8LfBzfXOUUlQA7dBJF6BB64Z`.
