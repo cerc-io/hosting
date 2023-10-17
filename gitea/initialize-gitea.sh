@@ -9,7 +9,7 @@ fi
 # See: https://stackoverflow.com/a/74449556
 secure_password() {
     # extra bytes so that even if we delete some chars we will still have plenty
-    openssl rand -base64 32 | tr -d '\/+=' | head -c10 && echo
+    openssl rand -base64 32 | tr -d '\/+=' | head -c 10 && echo
 }
 
 GITEA_USER=${CERC_GITEA_NEW_ADMIN_USERNAME:-"gitea_admin"}
