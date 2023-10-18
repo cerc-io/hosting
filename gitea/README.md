@@ -25,3 +25,8 @@ GITEA__log__LEVEL=TRACE
 ```
 to the `server` definition in `docker-compose.yml` and re-start.
 Details on how to setup remote debugging of the gitea server inside its container can be found [here](gitea-debugging.md).
+
+#### Action Runners
+
+A Dockerized action runner is deployed by default for the labels `ubuntu-latest` and `ubuntu-22.04`.  Details on deploying
+additional runners can be found [here](act-runner.md).

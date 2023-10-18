@@ -6,9 +6,10 @@ if [[ -n "$CERC_SCRIPT_DEBUG" ]]; then
     set -x
 fi
 
-# See: https://stackoverflow.com/a/74449556
 secure_password() {
-    cat /dev/urandom | tr -dc A-Za-z0-9~_- | head -c 10 && echo
+    # use openssl as the source, because it behaves similarly on both linux and macos
+    # we generate extra bytes so that even if tr deletes some chars we will still have plenty
+    openssl rand -base64 32 | tr -d '\/+=' | head -c 10 && echo
 }
 
 GITEA_USER=${CERC_GITEA_NEW_ADMIN_USERNAME:-"gitea_admin"}
