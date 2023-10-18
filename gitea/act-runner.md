@@ -1,5 +1,7 @@
 ## Deploying Action Runners
 
+IMPORTANT NOTE: you should be aware that anyone with the ability to modify code run under a CI job in the host Gitea (this includes anyone with commit rights; anyone with the ability to modify any dependency; anyone with the ability to modify dependent components such as base container images) CAN POTENTIALLY COMPROMISE (hack, take over, steal data from) the machine hosting a runner. Proceed with caution.
+
 ### Releases
 Gitea publishes binary releases of [gitea/act_runner](https://gitea.com/gitea/act_runner/releases) for many platform and architectures, which can be used to deploy new action runners simply.
 
