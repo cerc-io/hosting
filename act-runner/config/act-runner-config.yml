@@ -45,4 +45,6 @@ container:
   # Whether to use privileged mode or not when launching task containers (privileged mode is required for Docker-in-Docker).
   privileged: true
   # And other options to be used when the container is started (eg, --add-host=my.gitea.url:host-gateway).
-  options: --add-host=gitea.local:host-gateway --volume "/var/lib/docker"
+  options: --add-host=gitea.local:host-gateway --volume "/var/lib/docker" --volume "/data:/data:ro"
+  valid_volumes:
+    - act-runner-shared
