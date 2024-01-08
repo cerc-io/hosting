@@ -4,7 +4,7 @@ FROM ubuntu:22.04
 RUN ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONTAINER_TIMEZONE > /etc/timezone
 
 # Install basic tools
-RUN apt update && apt install -y gpg curl apt-transport-https ca-certificates lsb-release build-essential
+RUN apt update && apt install -y gpg curl wget apt-transport-https ca-certificates lsb-release build-essential
 
 # Add Docker repo
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -16,7 +16,6 @@ ARG NODE_MAJOR=18
 # See: https://stackoverflow.com/a/77021599/1701505
 RUN set -uex; \
     apt-get update; \
-    apt-get install -y ca-certificates curl gnupg; \
     mkdir -p /etc/apt/keyrings; \
     curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
      | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg; \
@@ -31,3 +30,23 @@ RUN apt update && apt install -y docker-ce && rm -rf /var/lib/apt/lists/*
 RUN apt update && apt install -y sudo
 # Install software-properties-common so we have the add-apt-repository command, used by some actions to add a package repo
 RUN apt update && apt install -y software-properties-common
+
+# Packages and files to support dind functionality see: https://github.com/cruizba/ubuntu-dind
+RUN apt update && apt install -y iptables supervisor
+COPY modprobe start-docker.sh entrypoint.sh /usr/local/bin/
+COPY supervisor/ /etc/supervisor/conf.d/
+COPY logger.sh /opt/bash-utils/logger.sh
+
+RUN chmod +x /usr/local/bin/start-docker.sh \
+	/usr/local/bin/entrypoint.sh \
+	/usr/local/bin/modprobe
+
+ENV DOCKER_HOST "unix:///var/run/dind.sock"
+
+# This VOLUME directive is required for k3d to work, probably because it needs the directory to exist
+# the volume does not need to be mounted.
+VOLUME /var/lib/docker
+
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["bash"]
+
