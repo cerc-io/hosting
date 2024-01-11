@@ -21,6 +21,7 @@ def create(context, extra_args):
     # Our goal here is just to copy the config file for act
     deployment_config_dir = context.deployment_dir.joinpath("data",
                                                             "act-runner-config")
-    compose_file = [f for f in context.command_context.cluster_context.compose_files if "act-runner" in f][0]
+    command_context = extra_args[2]
+    compose_file = [f for f in command_context.cluster_context.compose_files if "act-runner" in f][0]
     source_config_file = Path(compose_file).parent.joinpath("config", "act-runner-config.yml")
     copy(source_config_file, deployment_config_dir)
