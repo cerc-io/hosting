@@ -28,6 +28,8 @@ RUN set -uex; \
 RUN apt update && apt install -y docker-ce && rm -rf /var/lib/apt/lists/*
 # Install sudo because some actions projects assume it is present, and it is present in GitHub runners
 RUN apt update && apt install -y sudo
+# Make sure we have some other basic tools that scripts expect.
+RUN apt update && apt install -y wget curl jq
 # Install software-properties-common so we have the add-apt-repository command, used by some actions to add a package repo
 RUN apt update && apt install -y software-properties-common
 
