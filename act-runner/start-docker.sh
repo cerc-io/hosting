@@ -1,5 +1,6 @@
 #!/bin/bash
 source /opt/bash-utils/logger.sh
+source /opt/bash-utils/cgroup-helper.sh
 
 function wait_for_process () {
     local max_time_wait=30
@@ -16,6 +17,9 @@ function wait_for_process () {
     done
     return 0
 }
+
+# Some payloads (e.g. kind) need systemd to run, which in turn requires forking the cgroup hierarchy
+configure_cgroup
 
 INFO "Starting supervisor"
 /usr/bin/supervisord -n >> /dev/null 2>&1 &
