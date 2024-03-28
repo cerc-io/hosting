@@ -10,8 +10,9 @@ docker build -t cerc/act-runner:local .
 ```
 
 #### Deploy Gitea Stack
-1. `cd ./gitea`
+1. `cd ../act-runner`
 1. Build the task executor container: `docker build -t cerc/act-runner-task-executor:local -f Dockerfile.task-executor .`
+1. `cd ../gitea`
 1. Run the script `./run-this-first.sh`
 1. Bring up the gitea cluster `docker compose up -d`
 1. Run the script `./initialize-gitea.sh`
@@ -29,4 +30,4 @@ Details on how to setup remote debugging of the gitea server inside its containe
 #### Action Runners
 
 A Dockerized action runner is deployed by default for the labels `ubuntu-latest` and `ubuntu-22.04`.  Details on deploying
-additional runners can be found [here](../act-runner/act-runner.md).
+additional runners can be found [here](act-runner.md).
