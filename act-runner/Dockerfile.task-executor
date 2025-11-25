@@ -40,6 +40,7 @@ COPY modprobe start-docker.sh entrypoint.sh /usr/local/bin/
 COPY supervisor/ /etc/supervisor/conf.d/
 COPY logger.sh /opt/bash-utils/logger.sh
 COPY cgroup-helper.sh /opt/bash-utils/cgroup-helper.sh
+COPY task-executor-docker-daemon.json /etc/docker/daemon.json
 
 RUN chmod +x /usr/local/bin/start-docker.sh \
 	/usr/local/bin/entrypoint.sh \
